@@ -60,9 +60,6 @@ function getClientIp(req) {
       return req.headers['x-client-ip'];
     } // Load-balancers (AWS ELB) or proxies.
 
-
-    var xForwardedFor = getClientIpFromXForwardedFor(req.headers['x-forwarded-for']);
-
     // Cloudflare.
     // This has to be before x-forwarded-for because when both headers present, this has the client IP
     // @see https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-Cloudflare-handle-HTTP-Request-headers-
