@@ -55,17 +55,18 @@ function getClientIp(req) {
             return req.headers['x-client-ip'];
         }
 
-        // Load-balancers (AWS ELB) or proxies.
-        const xForwardedFor = getClientIpFromXForwardedFor(req.headers['x-forwarded-for']);
-        if (is.ip(xForwardedFor)) {
-            return xForwardedFor;
-        }
-
         // Cloudflare.
+        // This has to be before x-forwarded-for because when both headers present, this has the client IP
         // @see https://support.cloudflare.com/hc/en-us/articles/200170986-How-does-Cloudflare-handle-HTTP-Request-headers-
         // CF-Connecting-IP - applied to every request to the origin.
         if (is.ip(req.headers['cf-connecting-ip'])) {
             return req.headers['cf-connecting-ip'];
+        }
+        
+        // Load-balancers (AWS ELB) or proxies.
+        const xForwardedFor = getClientIpFromXForwardedFor(req.headers['x-forwarded-for']);
+        if (is.ip(xForwardedFor)) {
+            return xForwardedFor;
         }
 
         // Fastly and Firebase hosting header (When forwared to cloud function)
